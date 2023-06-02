@@ -77,8 +77,8 @@ library PositionUtils {
         // should be called strictly before position is updated in Vault
         IShortsTracker(_shortsTracker).updateGlobalShortData(_account, _collateralToken, _indexToken, _isLong, _sizeDelta, markPrice, true);
 
-        ITimelock(timelock).enableLeverage(_vault);
+        //ITimelock(timelock).enableLeverage(_vault);
         IRouter(_router).pluginIncreasePosition(_account, _collateralToken, _indexToken, _sizeDelta, _isLong);
-        ITimelock(timelock).disableLeverage(_vault);
+        //ITimelock(timelock).disableLeverage(_vault);
     }
 }
