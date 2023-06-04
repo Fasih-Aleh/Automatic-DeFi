@@ -7,11 +7,20 @@ contract Rebate {
     }
 
     struct record {
-        uint256 amount;
+        uint256 usdgAmount;
         uint256 timestamp;
-        uint256 price;
     }
 
-    
+    mapping(address => mapping (uint => record)) records;
 
+    mapping(address => uint256) liquidityCount;
+
+    mapping(address => uint256) liquidityIndex;
+
+    function addLiquidity(address _account, uint256 _usdgAmount) external {
+    }
+
+    function removeLiquidty(address _account, uint256 _usdgAmount) external {
+        
+    }
 }
