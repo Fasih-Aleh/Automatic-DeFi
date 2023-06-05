@@ -35,18 +35,17 @@ contract Rebate is Governable {
         isHandler[_handler] = _isHandler;
     }
 
-    function addLiquidity(address _account, uint256 _usdgAmount) external {
+    function addLiquidity(address _account, uint256 _usdgAmount) external onlyHandler {
         uint256 _liquidityCount = liquidityCount[_account];
         records[_account][_liquidityCount] = record(_usdgAmount, block.timestamp);
         liquidityCount[_account] += 1;
         liquidityAmount[_account] += _usdgAmount;
     }
 
-    function removeLiquidty(address _account, uint256 _usdgAmount) external {
+    function removeLiquidty(address _account, uint256 _usdgAmount) external onlyHandler {
         require(_usdgAmount <= liquidityAmount[_account], "not enough liquidity");
         uint256 removedLiquidity = 0;
         uint256 rebateableLiquidity = 0;
-        
         uint256 _liquidityIndex = liquidityIndex[_account];
         while(removedLiquidity < _usdgAmount) {
             if (_usdgAmount - removedLiquidity < records[_account][_liquidityIndex].usdgAmount) {
@@ -67,7 +66,12 @@ contract Rebate is Governable {
             }
         }
         if (rebateableLiquidity > 0) {
-            
+            if (rebateableLiquidity > MAX_REBATE)
+                rebateableLiquidity = MAX_REBATE;
         }        
+    }
+
+    function giveRebate(address _account, uint256 _amount) {
+        
     }
 }
