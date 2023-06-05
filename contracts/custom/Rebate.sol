@@ -6,6 +6,9 @@ import "../access/Governable.sol";
 
 contract Rebate is Governable {
 
+    uint256 MAX_REBATE = 10000 * 1e18;
+    uint256 MIN_REBATE_TIME = 90 days;
+
     struct record {
         uint256 usdgAmount;
         uint256 timestamp;
@@ -42,18 +45,29 @@ contract Rebate is Governable {
     function removeLiquidty(address _account, uint256 _usdgAmount) external {
         require(_usdgAmount <= liquidityAmount[_account], "not enough liquidity");
         uint256 removedLiquidity = 0;
+        uint256 rebateableLiquidity = 0;
+        
         uint256 _liquidityIndex = liquidityIndex[_account];
         while(removedLiquidity < _usdgAmount) {
             if (_usdgAmount - removedLiquidity < records[_account][_liquidityIndex].usdgAmount) {
                 uint256 liquidityToRemove = _usdgAmount - removedLiquidity;
                 records[_account][_liquidityIndex].usdgAmount -= liquidityToRemove;
                 removedLiquidity += liquidityToRemove;
+                if (records[_account][_liquidityIndex].timestamp + MIN_REBATE_TIME < block.timestamp) {
+                    rebateableLiquidity += liquidityToRemove;
+                }
             }
             else {
                 uint256 liquidityToRemove = records[_account][_liquidityIndex].usdgAmount;
                 records[_account][_liquidityIndex].usdgAmount = 0;
                 liquidityIndex[_account] += 1;
+                if (records[_account][_liquidityIndex].timestamp + MIN_REBATE_TIME < block.timestamp) {
+                    rebateableLiquidity += liquidityToRemove;
+                }
             }
+        }
+        if (rebateableLiquidity > 0) {
+            
         }        
     }
 }
