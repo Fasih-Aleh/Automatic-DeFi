@@ -5,8 +5,6 @@ pragma solidity 0.6.12;
 import "../access/Governable.sol";
 
 contract Rebate is Governable {
-    constructor() public {
-    }
 
     struct record {
         uint256 usdgAmount;
@@ -20,6 +18,19 @@ contract Rebate is Governable {
     mapping(address => uint256) liquidityCount;
 
     mapping(address => uint256) liquidityIndex;
+
+    mapping (address => bool) public isHandler;
+
+    modifier onlyHandler() {
+        require(isHandler[msg.sender], "GmxFloor: forbidden");
+        _;
+    }
+
+    constructor () public {}
+
+    function setHandler(address _handler, bool _isHandler) public onlyGov {
+        isHandler[_handler] = _isHandler;
+    }
 
     function addLiquidity(address _account, uint256 _usdgAmount) external {
         uint256 _liquidityCount = liquidityCount[_account];
