@@ -31,14 +31,14 @@ contract Rebate {
         uint256 removedLiquidity = 0;
         uint256 _liquidityIndex = liquidityIndex[_account];
         while(removedLiquidity < _usdgAmount) {
-            if (_usdgAmount - removedLiquidity < records[_account][liquidityIndex].usdgAmount) {
+            if (_usdgAmount - removedLiquidity < records[_account][_liquidityIndex].usdgAmount) {
                 uint256 liquidityToRemove = _usdgAmount - removedLiquidity;
-                records[_account][liquidityIndex].usdgAmount -= liquidityToRemove;
+                records[_account][_liquidityIndex].usdgAmount -= liquidityToRemove;
                 removedLiquidity += liquidityToRemove;
             }
             else {
-                uint256 liquidityToRemove = records[_account][liquidityIndex];
-                records[_account][liquidityIndex].usdgAmount = 0;
+                uint256 liquidityToRemove = records[_account][_liquidityIndex].usdgAmount;
+                records[_account][_liquidityIndex].usdgAmount = 0;
                 liquidityIndex[_account] += 1;
             }
         }        
