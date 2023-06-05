@@ -2,7 +2,9 @@
 
 pragma solidity 0.6.12;
 
-contract Rebate {
+import "../access/Governable.sol";
+
+contract Rebate is Governable {
     constructor() public {
     }
 
