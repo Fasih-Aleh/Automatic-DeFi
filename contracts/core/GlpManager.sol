@@ -21,7 +21,7 @@ contract GlpManager is ReentrancyGuard, Governable, IGlpManager {
     uint256 public constant PRICE_PRECISION = 10 ** 30;
     uint256 public constant USDG_DECIMALS = 18;
     uint256 public constant GLP_PRECISION = 10 ** 18;
-    uint256 public constant MAX_COOLDOWN_DURATION = 48 hours;
+    uint256 public constant MAX_COOLDOWN_DURATION = 72 hours;
     uint256 public constant BASIS_POINTS_DIVISOR = 10000;
 
     IVault public override vault;
