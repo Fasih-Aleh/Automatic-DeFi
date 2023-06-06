@@ -15,6 +15,8 @@ interface IesrATP {
 
 contract Rebate is Governable {
 
+    using SafeMath for uint256;
+
     uint256 public constant PRICE_PRECISION = 10 ** 30;
     uint256 public constant USDG_DECIMALS = 18;
 
