@@ -3,11 +3,26 @@
 pragma solidity 0.6.12;
 
 import "../access/Governable.sol";
+import "../libraries/math/SafeMath.sol";
+
+interface IGlpManager {
+    function getPrice(bool _maximise) external view returns (uint256);
+}
+
+interface IesrATP {
+    function mint(address _account, uint256 _amount) external;
+}
 
 contract Rebate is Governable {
 
-    uint256 MAX_REBATE = 10000 * 1e18;
-    uint256 MIN_REBATE_TIME = 90 days;
+    uint256 public constant PRICE_PRECISION = 10 ** 30;
+    uint256 public constant USDG_DECIMALS = 18;
+
+    uint256 public MAX_REBATE = 10000 * 1e18;
+    uint256 public MIN_REBATE_TIME = 90 days;
+
+    address public glpManager;
+    address public esrATP;
 
     struct record {
         uint256 usdgAmount;
@@ -29,7 +44,10 @@ contract Rebate is Governable {
         _;
     }
 
-    constructor () public {}
+    constructor (address _glpManager, address _esrATP) public {
+        glpManager = _glpManager;
+        esrATP = _esrATP;
+    }
 
     function setHandler(address _handler, bool _isHandler) public onlyGov {
         isHandler[_handler] = _isHandler;
@@ -72,6 +90,8 @@ contract Rebate is Governable {
     }
 
     function giveRebate(address _account, uint256 _amount) {
-        
+        uint256 glpPrice = IGlpManager(glpManager).getPrice(true);
+        uint256 glpAmount = _amount.mul(glpPrice).div(PRICE_PRECISION);
+        IesrATP(esrATP).mint(_account, glpAmount);
     }
 }
