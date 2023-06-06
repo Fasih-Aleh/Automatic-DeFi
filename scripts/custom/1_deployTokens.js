@@ -21,11 +21,11 @@ async function main() {
   const USDT = (await callWithRetries(deployContract, ["FaucetToken", ["Tether", "USDT", 18, expandDecimals(1000, 18)]]));
   deployments["USDT"] = USDT.address;
   
-  const GMX = await callWithRetries(deployContract, ["rATP", []]);
-  deployments["rATP"] = GMX.address;
+  const GMX = await callWithRetries(deployContract, ["GMX", []]);
+  deployments["GMX"] = GMX.address;
   
-  const esGMX = await callWithRetries(deployContract, ["MintableBaseToken", ["esrATP", "esrATP", 0]]);
-  deployments["esrATP"] = esGMX.address;
+  const esGMX = await callWithRetries(deployContract, ["MintableBaseToken", ["esGMX", "esGMX", 0]]);
+  deployments["esGMX"] = esGMX.address;
     
   writeFileSync(outputFilePath, JSON.stringify(deployments, null, 2));
   console.log("Completed");

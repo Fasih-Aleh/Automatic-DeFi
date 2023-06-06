@@ -12,42 +12,42 @@ async function main() {
   
   const glp = await contractAt("GLP", deployments.GLP)
 
-  const gmx = await contractAt("rATP", deployments.rATP);
+  const gmx = await contractAt("GMX", deployments.GMX);
   
-  const esGmx = await contractAt("esrATP", deployments.esrATP);
+  const esGmx = await contractAt("esGMX", deployments.esGMX);
   
-  const bnGmx = await deployContract("MintableBaseToken", ["Bonus rATP", "bnrATP", 0]);
-  deployments["bnrATP"] = bnGmx.address;
+  const bnGmx = await deployContract("MintableBaseToken", ["Bonus GMX", "bnGMX", 0]);
+  deployments["bnGMX"] = bnGmx.address;
 
   await sendTxn(esGmx.setInPrivateTransferMode(true), "esGmx.setInPrivateTransferMode")
   
   await sendTxn(glp.setInPrivateTransferMode(true), "glp.setInPrivateTransferMode")
 
-  const stakedGmxTracker = await deployContract("RewardTracker", ["Staked rATP", "srATP"])
-  deployments["srATP"] = stakedGmxTracker.address;
+  const stakedGmxTracker = await deployContract("RewardTracker", ["Staked GMX", "sGMX"])
+  deployments["sGMX"] = stakedGmxTracker.address;
   
   const stakedGmxDistributor = await deployContract("RewardDistributor", [esGmx.address, stakedGmxTracker.address])
-  deployments["srATP Distributor"] = stakedGmxDistributor.address;
+  deployments["sGMX Distributor"] = stakedGmxDistributor.address;
   
   await sendTxn(stakedGmxTracker.initialize([gmx.address, esGmx.address], stakedGmxDistributor.address), "stakedGmxTracker.initialize")
   
   await sendTxn(stakedGmxDistributor.updateLastDistributionTime(), "stakedGmxDistributor.updateLastDistributionTime")
 
-  const bonusGmxTracker = await deployContract("RewardTracker", ["Staked + Bonus rATP", "sbrATP"])
-  deployments["sbrATP"] = bonusGmxTracker.address;
+  const bonusGmxTracker = await deployContract("RewardTracker", ["Staked + Bonus GMX", "sbGMX"])
+  deployments["sbGMX"] = bonusGmxTracker.address;
   
   const bonusGmxDistributor = await deployContract("BonusDistributor", [bnGmx.address, bonusGmxTracker.address])
-  deployments["sbrATP Distributor"] = bonusGmxDistributor.address;
+  deployments["sbGMX Distributor"] = bonusGmxDistributor.address;
   
   await sendTxn(bonusGmxTracker.initialize([stakedGmxTracker.address], bonusGmxDistributor.address), "bonusGmxTracker.initialize")
   
   await sendTxn(bonusGmxDistributor.updateLastDistributionTime(), "bonusGmxDistributor.updateLastDistributionTime")
 
-  const feeGmxTracker = await deployContract("RewardTracker", ["Staked + Bonus + Fee rATP", "sbfrATP"])
-  deployments["sbfrATP"] = feeGmxTracker.address;
+  const feeGmxTracker = await deployContract("RewardTracker", ["Staked + Bonus + Fee GMX", "sbfGMX"])
+  deployments["sbfGMX"] = feeGmxTracker.address;
   
   const feeGmxDistributor = await deployContract("RewardDistributor", [deployments.WETH, feeGmxTracker.address])
-  deployments["sbfrATP Distributor"] = feeGmxDistributor.address;
+  deployments["sbfGMX Distributor"] = feeGmxDistributor.address;
   
   await sendTxn(feeGmxTracker.initialize([bonusGmxTracker.address, bnGmx.address], feeGmxDistributor.address), "feeGmxTracker.initialize")
   
@@ -90,8 +90,8 @@ async function main() {
   await sendTxn(stakedGlpTracker.setInPrivateStakingMode(true), "stakedGlpTracker.setInPrivateStakingMode")
 
   const gmxVester = await deployContract("Vester", [
-    "Vested rATP", // _name
-    "vrATP", // _symbol
+    "Vested GMX", // _name
+    "vGMX", // _symbol
     vestingDuration, // _vestingDuration
     esGmx.address, // _esToken
     feeGmxTracker.address, // _pairToken
