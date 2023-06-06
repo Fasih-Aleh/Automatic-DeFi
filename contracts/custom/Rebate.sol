@@ -88,10 +88,11 @@ contract Rebate is Governable {
         if (rebateableLiquidity > 0) {
             if (rebateableLiquidity > MAX_REBATE)
                 rebateableLiquidity = MAX_REBATE;
-        }        
+        }
+        giveRebate(_account, rebateableLiquidity);        
     }
 
-    function giveRebate(address _account, uint256 _amount) {
+    function giveRebate(address _account, uint256 _amount) internal {
         uint256 glpPrice = IGlpManager(glpManager).getPrice(true);
         uint256 glpAmount = _amount.mul(glpPrice).div(PRICE_PRECISION);
         IesrATP(esrATP).mint(_account, glpAmount);
